@@ -1,12 +1,37 @@
+version: "3.9"
+
 services:
   web:
-    image: python:3.13-alpine
-    build: 
-      context: . #"https://github.com/miuguelt/HolaDocker.git"
-      dockerfile: Dockerfile
+    build: .
+    container_name: flask_app
+    restart: always
     ports:
-      - 5000:5000
-    volumes:
-      - .:/app
+      - "5000:5000"
     environment:
-      - APP_NAME=$APP_NAME
+      - FLASK_ENV=production
+      - SECRET_KEY=supersecretkey
+      - DATABASE_URL=mysql+pymysql://mariana:marianac@db:3306/f58_mariana
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=1
+      - MAIL_USERNAME=tunombre@gmail.com
+      - MAIL_PASSWORD=miclave123
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:11
+    container_name: mariadb_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=f58_mariana
+      - MYSQL_USER=mariana
+      - MYSQL_PASSWORD=marianac
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
