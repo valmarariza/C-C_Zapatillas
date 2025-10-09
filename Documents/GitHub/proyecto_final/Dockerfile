@@ -1,24 +1,26 @@
+# Imagen base ligera con Python
 FROM python:3.13-alpine
 
-# Variables de entorno para evitar problemas de buffering y pyc
+# Evitar archivos pyc y asegurar logs en consola
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Establecer el directorio de trabajo
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Instalar dependencias del sistema necesarias para compilar dependencias de Python
-RUN apk add --no-cache build-base mariadb-connector-c-dev
+# Instalar dependencias del sistema necesarias para compilar extensiones de Python
+RUN apk add --no-cache build-base libffi-dev openssl-dev
 
-# Copiar requirements.txt e instalar dependencias
+# Copiar e instalar dependencias del proyecto
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código
+# Copiar todo el código de la app
 COPY . .
 
-# Exponer el puerto (Gunicorn lo usará)
+# Exponer el puerto de la aplicación
 EXPOSE 5000
 
-# Comando de arranque (Gunicorn para producción)
+# Comando de inicio con Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--forwarded-allow-ips=*", "run:app"]

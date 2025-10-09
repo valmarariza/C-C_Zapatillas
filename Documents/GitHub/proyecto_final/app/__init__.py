@@ -15,7 +15,9 @@ def create_app():
 
     # Configuración de seguridad
     app.config['SECRET_KEY'] = 'supersecretkey'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mariana:marianac@isladigital.xyz:3311/f58_mariana'
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://mariana:marianac@isladigital.xyz:3311/f58_mariana"
+
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Configuración de correo
